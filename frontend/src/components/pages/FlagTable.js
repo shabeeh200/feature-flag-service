@@ -1,7 +1,7 @@
 // src/FlagsPage.jsx
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Switch } from '@headlessui/react';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import FilterControls from '../components/FilterControl';
 import NewFlag from '../components/NewFlagForm';
 
@@ -33,7 +33,15 @@ const FlagsPage = () => {
     () => Array.from(new Set(flags.flatMap((f) => f.tags))),
     [flags]
   );
+ const deleteFlag = useCallback((flagKey) => {
+    setFlags((prev) => prev.filter((f) => f.key !== flagKey));
+    // TODO: Call backend DELETE API
+  }, []);
 
+  const editFlag = useCallback((flagKey) => {
+    // TODO: Navigate to edit form or open modal
+    console.log('Edit', flagKey);
+  }, []);
   const filteredFlags = useMemo(
     () =>
       flags.filter((flag) => {
@@ -60,12 +68,13 @@ const FlagsPage = () => {
   );
 
   return (
-    <div>
+ <div>
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Feature Flags</h1>
-        <button className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-600 text-white font-semibold rounded shadow"        onClick={() => setShowModal(true)}>
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-gray-600 text-white font-semibold rounded shadow"
+        >
           <FaPlus /> Create Flag
-          
         </button>
       </header>
 
@@ -79,12 +88,13 @@ const FlagsPage = () => {
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-white- text-black text-sm uppercase">
+          <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
             <tr>
               <th className="px-6 py-3">Flag</th>
               <th className="px-6 py-3">Description</th>
               <th className="px-6 py-3">Tags</th>
               <th className="px-6 py-3">Enabled</th>
+              <th className="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -95,7 +105,10 @@ const FlagsPage = () => {
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 text-xs bg-gray-100 text-black rounded-full">
+                      <span
+                        key={tag}
+                        className="px-2 py-1 text-xs bg-gray-100 text-black rounded-full"
+                      >
                         #{tag}
                       </span>
                     ))}
@@ -105,12 +118,26 @@ const FlagsPage = () => {
                   <Switch
                     checked={enabled}
                     onChange={() => toggleFlag(key)}
-                    className={`${enabled ? 'bg-black' : 'bg-white'} relative inline-flex h-6 w-11 items-center rounded-full`}
+                    className={`${enabled ? 'bg-black' : 'bg-gray-300'} relative inline-flex h-6 w-11 items-center rounded-full`}
                   >
                     <span
                       className={`${enabled ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition`}
                     />
                   </Switch>
+                </td>
+                <td className="px-6 py-4 space-x-4">
+                  <button
+                    onClick={() => editFlag(key)}
+                    className="text-black hover:text-gray-700"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={() => deleteFlag(key)}
+                    className="text-black hover:text-gray-700"
+                  >
+                    <FaTrash />
+                  </button>
                 </td>
               </tr>
             ))}
