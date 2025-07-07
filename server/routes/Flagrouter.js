@@ -23,22 +23,22 @@ const cacheMiddleware = require('../middleware/cacheMiddleware');
 const {
   createFlag,
   getAllFlags,
-  getFlagByKey,
-  updateFlag,
-  toggleFlag,
-  deleteFlag,
+  getFlagById,
+  updateFlagById,
+  toggleFlagById,
+  deleteFlagById,
 } =require("../controller/Flagcontroller");
 
 // READS (cached)
 
 // READS (cached)
 router.get('/',        cacheMiddleware, getAllFlags);
-router.get('/:name',   cacheMiddleware, getFlagByKey);
+router.get('/:id',   cacheMiddleware, getFlagById);
 
 // WRITES (invalidate happens inside controllers)
 router.post('/',       apiKeyAuth,      createFlag);
-router.put('/:name',   apiKeyAuth,      updateFlag);
-router.patch('/:name/toggle', apiKeyAuth, toggleFlag);
-router.delete('/:name', apiKeyAuth,     deleteFlag);
+router.put('/:id',   apiKeyAuth,      updateFlagById);
+router.patch('/:id/toggle', apiKeyAuth, toggleFlagById);
+router.delete('/:id', apiKeyAuth,     deleteFlagById);
 
 module.exports = router;

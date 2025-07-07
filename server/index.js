@@ -2,7 +2,7 @@ const express = require('express');
 // const morgan = require('morgan');
 const mongoose = require("mongoose");
 require('dotenv').config();
-
+const cors = require("cors");
 //const { consoleLogger, fileLogger } = require('./middleware/logger');
 
 const app = express();
@@ -13,6 +13,7 @@ const routeFlag=require("./routes/Flagrouter");
 // app.use(fileLogger);
 
 // 2. JSON parser
+app.use(cors());
 app.use(express.json());
 
 // Your routes…

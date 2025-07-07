@@ -1,0 +1,46 @@
+☐ Setup:
+    ☐ * Frontend base UI done @done
+    ☐ * Backend routes and logic set @done
+    ☐ * Connect frontend and backend @done
+    ☐ * Install ESLint + Prettier @today
+
+☐ Testing:
+    ☐ * Write unit tests for backend @high
+    ☐ * Test frontend + API integration @today
+    ☐ * Handle edge cases + 404/500 errors
+    ☐ * Full end-to-end testing before deployment @critical
+
+☐ Docker:
+    ☐ * Create Dockerfile for backend @today
+    ☐ * Create Dockerfile for frontendḍ
+    ☐ * Set up docker-compose.yml @high
+    ☐ * Test services with Docker locally @today
+
+☐ CI/CD:
+    ☐ * Set up GitHub Actions / GitLab CI pipeline @critical
+    ☐ * Add steps for: Lint → Build → Test → Docker → Deploy
+    ☐ * Enable build status badge on README
+    ☐ * Trigger tests on every push @today
+
+☐ Logging & Monitoring:
+    ☐ * Add basic logging with winston/pino @high
+    ☐ * Store logs in `logs/` folder or pipe to stdout
+    ☐ * Optionally integrate error monitoring (Sentry, LogRocket, etc.)
+    ☐ * Mask sensitive data in logs @critical
+
+☐ Formatting & Cleanup:
+    ☐ * Auto-format code using Prettier
+    ☐ * Fix linting errors with ESLint
+    ☐ * Delete unused console.logs / dummy files @low
+
+☐ Documentation:
+    ☐ * Write clear README with setup + usage instructions @today
+    ☐ * List all environment variables in `.env.example`
+    ☐ * Add API documentation if needed (Postman or Swagger)
+    ☐ * Include Docker run/build instructions
+
+☐ Final Checks:
+    ☐ * Test full flow on fresh system / new clone @critical
+    ☐ * Final commit + push @today
+    ☐ * Ask for feedback or PR review
+☐ 

@@ -1,9 +1,9 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/pages/Sidebar';
-import FlagsPage from './components/pages/FlagTable';
-import AuditPage from './components/pages/AuditPage';
+import Sidebar from './pages/Sidebar';
+import FlagsPage from './pages/FlagTable';
+import AuditPage from './pages/AuditPage';
 
 const App = () => (
   <Router>
