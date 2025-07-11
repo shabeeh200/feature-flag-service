@@ -19,6 +19,7 @@
     "node-cache": "^5.1.2"
   },
   "devDependencies": {
+    "jest": "^30.0.4",
     "mongodb-memory-server": "^10.1.4"
   }
 }
