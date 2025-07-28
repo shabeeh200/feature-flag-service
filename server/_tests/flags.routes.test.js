@@ -15,7 +15,7 @@ jest.mock('../middleware/cache', () => ({
 
 const cache = require('../middleware/cache');
 const app = require('../app');
-const Flag = require('../model/Flagmodel');
+const Flag = require('../models/Flagmodel');
 
 const apiKey = process.env.API_KEY;
 
