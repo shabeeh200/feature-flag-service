@@ -36,35 +36,20 @@
 // middleware/cache.js
 // middleware/cacheMiddleware.js
 // middleware/cacheMiddleware.js
-// middleware/cacheMiddleware.js
-
-/**
- * HTTP‑layer cache middleware for GET requests.
- * - On cache hit: returns cached JSON and skips controller.
- * - On cache miss: intercepts res.json to write response back to Redis.
- */
-
+// /middleware/cacheMiddleware.js
 const cache = require("./cache");
 const normalizeKey = cache.normalizeKey;
 const ttlSeconds = cache.ttlSeconds;
 
 module.exports = async (req, res, next) => {
-  // Only cache GET requests
-  if (req.method !== "GET") {
-    return next();
-  }
+  if (req.method !== "GET") return next();
 
   try {
     const key = normalizeKey(req.originalUrl);
 
-    // 1) Try Redis
     const cached = await cache.get(key);
-    if (cached) {
-      // Send cached response
-      return res.json(JSON.parse(cached));
-    }
+    if (cached) return res.json(JSON.parse(cached));
 
-    // 2) On miss, wrap res.json to cache response payload
     const originalJson = res.json.bind(res);
     res.json = async (payload) => {
       try {
