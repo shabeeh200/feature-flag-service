@@ -7,7 +7,10 @@ dotenv.config();
 jest.mock('../middleware/cache', () => ({
   get: jest.fn(),
   set: jest.fn(),
-  del: jest.fn()
+  del: jest.fn(),
+  normalizeKey: (key) => key.replace(/\/+$/, "") || "/",
+  ttlSeconds: 60,
+  invalidate: jest.fn()
 }));
 
 const cache = require('../middleware/cache');
