@@ -19,12 +19,20 @@ const FlagSchema = mongoose.Schema(
     enabled: {
       type: Boolean,
       required: true,
-    },
+    },environment: {
+    type: String,
+    enum: ['dev', 'staging', 'prod'],
+    default: 'dev'
   },
-  {
-    timestamps: true,
-  }
-);
+
+  targetUsers: [{ type: String }], // list of user IDs
+  rolloutPercentage: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 100
+  },
+}, { timestamps: true });
 
 const Flag = mongoose.model("Flag", FlagSchema);
 

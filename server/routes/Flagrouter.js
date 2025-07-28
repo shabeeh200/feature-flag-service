@@ -27,18 +27,26 @@ const {
   updateFlagById,
   toggleFlagById,
   deleteFlagById,
+ evaluateFlagForUser,
+ getFlagLog,
+ getUsers
 } =require("../controller/Flagcontroller");
 
 // READS (cached)
 
 // READS (cached)
 router.get('/',        cacheMiddleware, getAllFlags);
+router.get('/users', getUsers);
 router.get('/:id',   cacheMiddleware, getFlagById);
 
 // WRITES (invalidate happens inside controllers)
+
 router.post('/',       apiKeyAuth,      createFlag);
+router.get('/flag/logs',getFlagLog);
 router.put('/:id',   apiKeyAuth,      updateFlagById);
 router.patch('/:id/toggle', apiKeyAuth, toggleFlagById);
 router.delete('/:id', apiKeyAuth,     deleteFlagById);
+router.get('/:flagId/evaluate/:userId', evaluateFlagForUser);
+
 
 module.exports = router;
