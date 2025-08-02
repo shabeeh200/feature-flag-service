@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './pages/Sidebar';
-import FlagsPage from './pages/FlagTable';
+import FlagsPage from './pages/Dashboard';
 import AuditPage from './pages/AuditPage';
 
 const App = () => (
