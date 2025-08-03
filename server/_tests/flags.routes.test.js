@@ -71,20 +71,12 @@ it('should get all flags (simulate cache miss)', async () => {
 
   // Seed the DB
   await Flag.create({ name: 'demo-flag', enabled: false });
-
-  // Hit the paginated endpoint
   const res = await request(app).get('/api/flags?page=1&limit=10');
-
   expect(res.statusCode).toBe(200);
-
-  // Now .body is an object: { flags, total, page, totalPages }
   expect(res.body).toHaveProperty('flags');
   expect(Array.isArray(res.body.flags)).toBe(true);
-
-  // At least one flag in the array
   expect(res.body.flags.length).toBeGreaterThan(0);
 
-  // Also sanity‐check pagination metadata:
   expect(res.body).toHaveProperty('total');
   expect(typeof res.body.total).toBe('number');
   expect(res.body).toHaveProperty('page', 1);
