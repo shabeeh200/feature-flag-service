@@ -347,12 +347,40 @@ const createFlag = async (req, res) => {
 };
 
 // Get all flags
+// const getAllFlags = async (req, res) => {
+//   try {
+//     const flags = await Flag.find();
+//     res.status(200).json(flags);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 const getAllFlags = async (req, res) => {
   try {
-    const flags = await Flag.find();
-    res.status(200).json(flags);
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 10));
+    const skip  = (page - 1) * limit;
+
+    // 1) add sort so newest appear first  
+    // 2) add .lean() for faster plain-JS results  
+    const [ flags, total ] = await Promise.all([
+      Flag.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Flag.countDocuments()
+    ]);
+
+    return res.status(200).json({
+      flags,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    return res.status(500).json({ message: err.message });
   }
 };
 

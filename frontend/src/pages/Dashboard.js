@@ -174,6 +174,8 @@ const DashboardPage = () => {
     flags,
     loading,
     error,
+    page,
+    totalPages,
     fetchFlags,
     toggleFlag,
     deleteFlag,
@@ -184,7 +186,7 @@ const DashboardPage = () => {
 
   useEffect(() => {
     fetchFlags();
-  }, []);
+  },  [fetchFlags]);
 
   const handleCreated = async () => {
     await fetchFlags();
@@ -214,6 +216,8 @@ const DashboardPage = () => {
         flags={flags}
         loading={loading}
         error={error}
+        page={page}
+        totalPages={totalPages}
         onToggle={toggleFlag}
         onDelete={deleteFlag}
         onCreated={handleCreated}

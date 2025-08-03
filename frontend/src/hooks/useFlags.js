@@ -1,26 +1,31 @@
-// src/hooks/useFlags.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 
 export const useFlags = () => {
-  const [flags, setFlags]       = useState([]);
-  const [current, setCurrent]   = useState(null);  // single-flag state
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
+  const [flags, setFlags] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [current, setCurrent] = useState(null);
 
   // 1) FETCH ALL
-  const fetchFlags = async () => {
+    const fetchFlags = useCallback(async (pageArg = page, limit = 10) => {
     setLoading(true);
     try {
-      const res = await api.get('/');
-      setFlags(res.data);
+      const res = await api.get(`/?page=${pageArg}&limit=${limit}`);
+      setFlags(res.data.flags);
+      setTotal(res.data.total);
+      setPage(res.data.page);
+      setTotalPages(res.data.totalPages);
+      setError(null);
     } catch (err) {
       setError(err);
-
     } finally {
       setLoading(false);
     }
-  };
+   }, [page]);
 
   // 2) FETCH ONE
   const fetchFlag = async (id) => {
@@ -91,21 +96,24 @@ const deleteFlag = async (id) => {
 
 
   // On mount, load all flags
-  useEffect(() => {
-    fetchFlags();
-  }, []);
+useEffect(() => {
+  fetchFlags(); // load first page by default
+},  [fetchFlags]);
 
-  return {
-    flags,        // array of all flags
-    current,      // last single-flag fetched
-    loading,
-    error,
-    // Methods:
-    fetchFlags,
-    fetchFlag,
-    createFlag,
-    updateFlag,
-    toggleFlag,
-    deleteFlag,
-  };
+return {
+  flags,
+  total,
+  page,
+  totalPages,
+  loading,
+  error,
+  setPage,
+  current,
+  fetchFlag,
+  createFlag,
+  updateFlag,
+  toggleFlag,
+  deleteFlag,
+   fetchFlags,
+};
 };
