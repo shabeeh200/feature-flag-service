@@ -56,16 +56,40 @@ describe('Feature Flag API', () => {
     createdFlagId = res.body._id;
   });
 
-  it('should get all flags (simulate cache miss)', async () => {
-    cache.get.mockResolvedValue(null); // simulate cache miss
+  // it('should get all flags (simulate cache miss)', async () => {
+  //   cache.get.mockResolvedValue(null); // simulate cache miss
 
-    await Flag.create({ name: 'demo-flag', enabled: false });
+  //   await Flag.create({ name: 'demo-flag', enabled: false });
 
-    const res = await request(app).get('/api/flags');
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
-  });
+  //   const res = await request(app).get('/api/flags');
+  //   expect(res.statusCode).toBe(200);
+  //   expect(Array.isArray(res.body)).toBe(true);
+  //   expect(res.body.length).toBeGreaterThan(0);
+  // });
+it('should get all flags (simulate cache miss)', async () => {
+  cache.get.mockResolvedValue(null); // simulate cache miss
+
+  // Seed the DB
+  await Flag.create({ name: 'demo-flag', enabled: false });
+
+  // Hit the paginated endpoint
+  const res = await request(app).get('/api/flags?page=1&limit=10');
+
+  expect(res.statusCode).toBe(200);
+
+  // Now .body is an object: { flags, total, page, totalPages }
+  expect(res.body).toHaveProperty('flags');
+  expect(Array.isArray(res.body.flags)).toBe(true);
+
+  // At least one flag in the array
+  expect(res.body.flags.length).toBeGreaterThan(0);
+
+  // Also sanity‐check pagination metadata:
+  expect(res.body).toHaveProperty('total');
+  expect(typeof res.body.total).toBe('number');
+  expect(res.body).toHaveProperty('page', 1);
+  expect(res.body).toHaveProperty('totalPages');
+});
 
   it('should get a flag by ID', async () => {
     const flag = await Flag.create({ name: 'flag-id-test', enabled: false });
