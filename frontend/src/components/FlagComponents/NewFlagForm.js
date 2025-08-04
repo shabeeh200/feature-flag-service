@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Switch } from '@headlessui/react';
-import { useFlags } from '../hooks/useFlags';
-import { useUsers } from '../hooks/useUsers';
+import { useFlags } from '../../hooks/useFlags';
+import { useUsers } from '../../hooks/useUsers';
 
 const Dropdown = ({ options, onSelect, placeholder }) => {
   const [open, setOpen] = useState(false);

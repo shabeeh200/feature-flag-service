@@ -1,330 +1,10 @@
-// require('dotenv').config();
-
-// const Flag = require('../model/Flagmodel');
-// const FlagLog= require('../model/log.model');
-// const cache = require('../middleware/cache');
-
-// // Normalize trailing slashes (important for consistent cache keys)
-// const normalizeKey = (key) => key.replace(/\/+$/, '') || '/';
-
-// const allFlagsKey = normalizeKey('/api/flags');
-// const ttlSeconds = parseInt(process.env.CACHE_TTL, 10) || 60;
-
-// // Helper to invalidate cache
-// const invalidate = (path) => {
-//   const normalized = normalizeKey(path);
-//   cache.del(normalized);
-//   console.log(`[CACHE INVALIDATE] ${normalized}`);
-// };
-
-// // CREATE
-// const createFlag = async (req, res) => {
-//   const { name, description = '', enabled = false, tags = [], environment = 'dev', rolloutPercentage = 100, targetUsers = [] } = req.body;
-
-//   if (!name || typeof name !== 'string' || name.includes(' ')) {
-//     return res.status(400).json({ message: 'Flag name is required and must not contain spaces.' });
-//   }
-
-//   const flagData = {
-//     name: name.trim(),
-//     description: description.trim(),
-//     enabled,
-//     tags: Array.isArray(tags) ? tags.map(tag => tag.trim()).filter(Boolean) : [],
-//     environment,
-//     rolloutPercentage,
-//     targetUsers
-//   };
-
-//   try {
-//     const flag = await Flag.create(flagData);
-
-//     // ✅ Log creation
-//     await FlagLog.create({
-//       flagId: flag._id,
-//       action: 'create',
-//       user: 'System',
-//       before: null,
-//       after: flag
-//     });
-
-//     invalidate(allFlagsKey);
-//     const allFlags = await Flag.find();
-//     cache.set(allFlagsKey, allFlags, ttlSeconds);
-//     cache.set(`${allFlagsKey}/${flag._id}`, flag, ttlSeconds);
-
-//     return res.status(201).json(flag);
-//   } catch (err) {
-//     return res.status(500).json({ message: 'Server error during flag creation.', error: err.message });
-//   }
-// };
-
-// // const createFlag = async (req, res) => {
-// //   const { name, description = '', enabled = false, tags = [] } = req.body;
-
-// //   if (!name || typeof name !== 'string' || name.includes(' ')) {
-// //     return res.status(400).json({ message: 'Flag name is required and must not contain spaces.' });
-// //   }
-
-// //   const flagData = {
-// //     name: name.trim(),
-// //     description: description.trim(),
-// //     enabled,
-// //     tags: Array.isArray(tags) ? tags.map(tag => tag.trim()).filter(Boolean) : [],
-// //   };
-
-// //   try {
-// //     const flag = await Flag.create(flagData);
-
-// //     invalidate(allFlagsKey);
-
-// //     const allFlags = await Flag.find();
-// //     cache.set(allFlagsKey, allFlags, ttlSeconds);
-// //     cache.set(`${allFlagsKey}/${flag._id}`, flag, ttlSeconds);
-
-// //     return res.status(201).json(flag);
-// //   } catch (err) {
-// //     return res.status(500).json({ message: 'Server error during flag creation.', error: err.message });
-// //   }
-// // };
-
-// // GET ALL
-// const getAllFlags = async (req, res) => {
-//   try {
-//     const flags = await Flag.find();
-
-//     if (!flags || flags.length === 0) {
-//       return res.status(200).json({ message: 'No flags found.', flags: [] });
-//     }
-
-//     cache.set(allFlagsKey, flags, ttlSeconds);
-//     flags.forEach(f => cache.set(`${allFlagsKey}/${f._id}`, f, ttlSeconds));
-
-//     return res.status(200).json(flags);
-//   } catch (err) {
-//     return res.status(500).json({ message: 'Error fetching flags.', error: err.message });
-//   }
-// };
-
-// // GET ONE
-// const getFlagById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const flag = await Flag.findById(id);
-//     if (!flag) {
-//       return res.status(404).json({ message: 'Flag not found' });
-//     }
-//     return res.status(200).json(flag);
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };
-
-// // UPDATE
-// const updateFlagById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const oldFlag = await Flag.findById(id);
-//     if (!oldFlag) {
-//       return res.status(404).json({ message: 'Flag not found' });
-//     }
-
-//     const updated = await Flag.findByIdAndUpdate(id, req.body, { new: true });
-
-//     // ✅ Log update
-//     await FlagLog.create({
-//       flagId: updated._id,
-//       action: 'update',
-//       user: 'System',
-//       before: oldFlag,
-//       after: updated
-//     });
-
-//     invalidate(allFlagsKey);
-//     invalidate(`${allFlagsKey}/${id}`);
-
-//     return res.status(200).json(updated);
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };
-
-// // const updateFlagById = async (req, res) => {
-// //   try {
-// //     const { id } = req.params;
-// //     const updated = await Flag.findByIdAndUpdate(id, req.body, { new: true });
-// //     if (!updated) {
-// //       return res.status(404).json({ message: 'Flag not found' });
-// //     }
-
-// //     invalidate(allFlagsKey);
-// //     invalidate(`${allFlagsKey}/${id}`);
-
-// //     return res.status(200).json(updated);
-// //   } catch (err) {
-// //     return res.status(500).json({ message: err.message });
-// //   }
-// // };
-
-// // TOGGLE
-// const toggleFlagById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const flag = await Flag.findById(id);
-//     if (!flag) {
-//       return res.status(404).json({ message: 'Flag not found' });
-//     }
-
-//     const old = { ...flag.toObject() };
-
-//     flag.enabled = !flag.enabled;
-//     await flag.save();
-
-//     // ✅ Log toggle
-//     await FlagLog.create({
-//       flagId: flag._id,
-//       action: 'toggle',
-//       user: 'System',
-//       before: old,
-//       after: flag
-//     });
-
-//     invalidate(allFlagsKey);
-//     invalidate(`${allFlagsKey}/${id}`);
-
-//     return res.status(200).json(flag);
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };
-
-// // const toggleFlagById = async (req, res) => {
-// //   try {
-// //     const { id } = req.params;
-// //     const flag = await Flag.findById(id);
-// //     if (!flag) {
-// //       return res.status(404).json({ message: 'Flag not found' });
-// //     }
-
-// //     flag.enabled = !flag.enabled;
-// //     await flag.save();
-
-// //     invalidate(allFlagsKey);
-// //     invalidate(`${allFlagsKey}/${id}`);
-
-// //     return res.status(200).json(flag);
-// //   } catch (err) {
-// //     return res.status(500).json({ message: err.message });
-// //   }
-// // };
-
-// // DELETE
-// const deleteFlagById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const removed = await Flag.findByIdAndDelete(id);
-//     if (!removed) {
-//       return res.status(404).json({ message: 'Flag not found' });
-//     }
-
-//     // ✅ Log delete
-//     await FlagLog.create({
-//       flagId: removed._id,
-//       action: 'delete',
-//       user: 'System',
-//       before: removed,
-//       after: null
-//     });
-
-//     invalidate(allFlagsKey);
-//     invalidate(`${allFlagsKey}/${id}`);
-
-//     return res.status(204).send();
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };
-
-// // const deleteFlagById = async (req, res) => {
-// //   try {
-// //     const { id } = req.params;
-// //     const removed = await Flag.findByIdAndDelete(id);
-// //     if (!removed) {
-// //       return res.status(404).json({ message: 'Flag not found' });
-// //     }
-
-// //     invalidate(allFlagsKey);
-// //     invalidate(`${allFlagsKey}/${id}`);
-
-// //     return res.status(204).send();
-// //   } catch (err) {
-// //     return res.status(500).json({ message: err.message });
-// //   }
-// // };
-
-// // Simple hashing function for rollout decision
-// const getFlagLog=async(req, res)=>{
-// try {
-//     const logs = await FlagLog.find().sort({ timestamp: -1 });
-//     res.status(200).json(logs);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-// const hashUserToPercentage = (userId, flagId) => {
-//   const hash = require('crypto')
-//     .createHash('sha256')
-//     .update(userId + flagId)
-//     .digest('hex');
-//   const intValue = parseInt(hash.slice(0, 8), 16); // Use part of hash
-//   return intValue % 100; // 0 to 99
-// };
-
-// const evaluateFlagForUser = async (req, res) => {
-//   const { userId, flagId } = req.params;
-
-//   try {
-//     const flag = await Flag.findById(flagId);
-//     if (!flag) return res.status(404).json({ message: 'Flag not found' });
-
-//     const inTargetUsers = flag.targetUsers?.includes(userId);
-//     const isInRollout = hashUserToPercentage(userId, flag._id) < (flag.rolloutPercentage || 0);
-
-//     const enabledForUser = flag.enabled && (inTargetUsers || isInRollout);
-
-//     return res.status(200).json({
-//       userId,
-//       flagId,
-//       enabledForUser,
-//       reason: {
-//         globallyEnabled: flag.enabled,
-//         inTargetUsers,
-//         withinRollout: isInRollout,
-//       },
-//     });
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };
-
-// module.exports = {
-//   createFlag,
-//   getAllFlags,
-//   getFlagById,
-//   updateFlagById,
-//   toggleFlagById,
-//   deleteFlagById,
-//   evaluateFlagForUser,
-//   getFlagLog,
-// };
-
 require('dotenv').config();
 const crypto = require('crypto');
 const Flag = require('../models/Flagmodel');
 const FlagLog = require('../models/log.model');
 const diffObjects = require('../utils/diffObjects');
 const mockUsers=require("../models/userFakemodel");
-const { invalidate, normalizeKey } = require("../middleware/cache");
-const allFlagsKey = normalizeKey("/api/flags");
+const { invalidate } = require("../middleware/cache");
 // Create a new flag
 const createFlag = async (req, res) => {
   try {
@@ -338,8 +18,7 @@ const createFlag = async (req, res) => {
       after: flag.toObject(),
       changes: diffObjects({}, flag.toObject())
     });
-    invalidate(allFlagsKey);
-    invalidate(`${allFlagsKey}/${flag._id}`);
+    await invalidate("/api/flags");
     res.status(201).json(flag);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -420,8 +99,7 @@ const updateFlagById = async (req, res) => {
       after: updated.toObject(),
       changes: diffObjects(oldFlag.toObject(), updated.toObject())
     });
-    invalidate(allFlagsKey);
-    invalidate(`${allFlagsKey}/${req.params.id}`);
+   await invalidate("/api/flags");
     res.status(200).json(updated);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -446,8 +124,7 @@ const toggleFlagById = async (req, res) => {
       after: flag.toObject(),
       changes: diffObjects(old, flag.toObject())
     });
-    invalidate(allFlagsKey);
-    invalidate(`${allFlagsKey}/${req.params.id}`);
+    await invalidate("/api/flags");
     res.status(200).json(flag);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -468,8 +145,7 @@ const deleteFlagById = async (req, res) => {
       after: null,
       changes: diffObjects(removed.toObject(), {})
     });
-    invalidate(allFlagsKey);
-    invalidate(`${allFlagsKey}/${req.params.id}`);
+    await invalidate("/api/flags");
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -536,7 +212,69 @@ const evaluateFlagForUser = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+const getStats = async (req, res) => {
+  try {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7*24*60*60*1000);
 
+    // 1. Total / Enabled counts
+    const [ totalFlags, enabledCount ] = await Promise.all([
+      Flag.countDocuments(),
+      Flag.countDocuments({ enabled: true }),
+    ]);
+    const disabledCount = totalFlags - enabledCount;
+
+    // 2. Flags by environment
+    const byEnvAgg = await Flag.aggregate([
+      { $group: { _id: "$environment", count: { $sum: 1 } } }
+    ]);
+    const byEnv = { dev: 0, staging: 0, prod: 0 };
+    byEnvAgg.forEach(e => { byEnv[e._id] = e.count; });
+
+    // 3. Rollout buckets (0–25, 26–50, 51–75, 76–100)
+    const bucketAgg = await Flag.aggregate([
+      {
+        $bucket: {
+          groupBy: "$rolloutPercentage",
+          boundaries: [0, 26, 51, 76, 101],
+          default: "Other",
+          output: { count: { $sum: 1 } }
+        }
+      }
+    ]);
+    // Map the aggregation _id to human-readable ranges
+    const labelMap = { 0: "0–25", 26: "26–50", 51: "51–75", 76: "76–100" };
+    const rolloutBuckets = bucketAgg
+      .filter(b => b._id !== "Other")
+      .map(b => ({
+        range: labelMap[b._id],
+        count: b.count
+      }));
+
+    // 4. New flags created in last 7 days
+    const newThisWeek = await Flag.countDocuments({
+      createdAt: { $gte: sevenDaysAgo }
+    });
+
+    // 5. Evaluation calls in last 7 days
+    const evalsThisWeek = await FlagLog.countDocuments({
+      timestamp: { $gte: sevenDaysAgo }
+    });
+
+    return res.json({
+      totalFlags,
+      enabledCount,
+      disabledCount,
+      byEnv,
+      rolloutBuckets,
+      newThisWeek,
+      evalsThisWeek
+    });
+  } catch (err) {
+    console.error("getStats error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 module.exports = {
   createFlag,
   getAllFlags,
@@ -546,6 +284,7 @@ module.exports = {
   deleteFlagById,
   getFlagLog,
   evaluateFlagForUser,
-  getUsers
+  getUsers,
+  getStats
 };
 

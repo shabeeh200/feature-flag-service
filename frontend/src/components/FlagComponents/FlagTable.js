@@ -75,36 +75,36 @@ const FlagTable = ({
         </div>
       ) : (
         <>
-          <div className="overflow-auto mt-4 bg-white shadow rounded border border-black">
-            <table className="w-full text-left border-collapse border border-black">
+          <div className="overflow-auto mt-4 bg-white shadow rounded">
+            <table className="w-full text-left border-collapse border border-gray-200">
               <thead className="bg-white uppercase text-sm">
                 <tr>
-                  <th className="px-4 py-2 border-b border-black">Name</th>
-                  <th className="px-4 py-2 border-b border-black">Description</th>
-                  <th className="px-4 py-2 border-b border-black">Tags</th>
-                  <th className="px-4 py-2 border-b border-black">Environment</th>
-                  <th className="px-4 py-2 border-b border-black">Enabled</th>
-                  <th className="px-4 py-2 border-b border-black">Actions</th>
+                  <th className="px-4 py-2 border-b border-gray-100">Name</th>
+                  <th className="px-4 py-2 border-b border-gray-100">Description</th>
+                  <th className="px-4 py-2 border-b border-gray-100">Tags</th>
+                  <th className="px-4 py-2 border-b border-gray-100">Environment</th>
+                  <th className="px-4 py-2 border-b border-gray-100">Enabled</th>
+                  <th className="px-4 py-2 border-b border-gray-100">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredFlags.map(f => (
                   <tr key={f._id}>
-                    <td className="px-4 py-2 border-t border-black">{f.name}</td>
-                    <td className="px-4 py-2 border-t border-black">{f.description}</td>
-                    <td className="px-4 py-2 border-t border-black">
+                    <td className="px-4 py-2 border-t border-gray-100">{f.name}</td>
+                    <td className="px-4 py-2 border-t border-gray-100">{f.description}</td>
+                    <td className="px-4 py-2 border-t border-gray-100">
                       <div className="flex flex-wrap gap-2">
                         {(f.tags || []).map(tag => (
                           <span key={tag} className="px-1 text-xs bg-gray-200 rounded">#{tag}</span>
                         ))}
                       </div>
                     </td>
-                    <td className="px-4 py-2 border-t border-black">
+                    <td className="px-4 py-2 border-t border-gray-100">
                       <span className="px-2 py-1 rounded bg-gray-100 text-xs font-semibold border border-gray-300">
                         {ENV_LABELS[f.environment] || f.environment}
                       </span>
                     </td>
-                    <td className="px-4 py-2 border-t border-black">
+                    <td className="px-4 py-2 border-t border-gray-100">
                       <Switch
                         checked={f.enabled}
                         onChange={() => onToggle(f._id)}
@@ -119,7 +119,7 @@ const FlagTable = ({
                         />
                       </Switch>
                     </td>
-                    <td className="px-4 py-2 border-t border-black">
+                    <td className="px-4 py-2 border-t border-gray-100">
                       <button
                         className="text-black px-4 py-2 rounded w-full md:w-auto mr-1"
                         onClick={() => onDelete(f._id)}

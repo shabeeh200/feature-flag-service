@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const dotenv = require('dotenv');
 dotenv.config();
+process.env.NODE_ENV = 'test';
 
 jest.mock('../middleware/cache', () => ({
   get: jest.fn(),
@@ -111,6 +112,17 @@ it('should get all flags (simulate cache miss)', async () => {
 
     expect(res.statusCode).toBe(204);
   });
+  describe('Rate limiting on /api/flags', () => {
+  it('blocks requests once the test limit is exceeded', async () => {
+    let res;
+    for (let i = 1; i <= 6; i++) {
+      res = await request(app).get('/api/flags?page=1&limit=1');
+    }
+    expect(res.statusCode).toBe(429);
+    expect(res.body.message).toMatch(/Too many requests/i);
+  });
+});
+
 });
 
 // const request = require('supertest');

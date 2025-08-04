@@ -29,7 +29,8 @@ const {
   deleteFlagById,
  evaluateFlagForUser,
  getFlagLog,
- getUsers
+ getUsers,
+ getStats
 } =require("../controller/Flagcontroller");
 
 // READS (cached)
@@ -43,6 +44,7 @@ router.get('/:id',   cacheMiddleware, getFlagById);
 
 router.post('/',       apiKeyAuth,      createFlag);
 router.get('/flag/logs',getFlagLog);
+router.get('/flag/stats',getStats);
 router.put('/:id',   apiKeyAuth,      updateFlagById);
 router.patch('/:id/toggle', apiKeyAuth, toggleFlagById);
 router.delete('/:id', apiKeyAuth,     deleteFlagById);

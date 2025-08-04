@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import PageContainer from '../components/PageContainer';
-import CenteredModal from '../components/CenteredModal';
+import PageContainer from '../components/LayoutComponents/PageContainer';
+import CenteredModal from '../components/LayoutComponents/CenteredModal';
 import { useFlagLogs } from '../hooks/useFlagLog';
 import { FaChevronDown } from 'react-icons/fa';
 
