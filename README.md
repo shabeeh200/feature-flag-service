@@ -29,7 +29,7 @@ Expand into phased rollouts, canary releases, and A/B testing to make it a light
   - Flags per environment
   - Rollout bucket distribution
   - Weekly stats (`newThisWeek`, `evalsThisWeek`)  
-- **React + Tailwind Dashboard** with KPI cards and Chart.js visualizations  
+- **React + Tailwind Dashboard** with Chart.js visualizations  
 - **Dockerized setup** for easy deployment  
 - **GitHub Actions** for CI/CD automation
 
@@ -79,3 +79,9 @@ This architecture lays the foundation for all these scenarios — even if some a
 cd backend
 npm install
 npm run dev
+2. **Start Frontend:**
+```bash
+cd frontend
+npm install
+npm start
+
