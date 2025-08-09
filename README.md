@@ -1,53 +1,81 @@
 # Feature Flag Service
 
-A lightweight, extensible system for managing feature toggles that enables granular control over feature releases without redeploying code.
+A lightweight, extensible system for managing feature toggles, enabling granular control over feature releases without redeploying code.
 
-## Project Overview
+## 📌 Project Overview
 
-Core goal: Decouple feature deployment from code deployment by providing a central service for runtime toggles, targeted rollouts, and audit logs.
+**Goal:** Decouple feature deployment from code deployment by providing a central service for runtime toggles, targeted rollouts, and analytics.
 
-Ideal for:
-- Phased rollouts
-- Canary tests
-- A/B experiments
-- Emergency kill-switches
+**Current capabilities:**  
+- Create, delete, and manage feature flags via a clean API and dashboard  
+- Real-time evaluation logic with rollout percentages and targeted users  
+- Stats and analytics for quick flag insights  
 
-## Features
+**Future vision:**  
+Expand into phased rollouts, canary releases, and A/B testing to make it a lightweight experimentation platform.
 
-### Core Features
-- CRUD API for Flags (Create, Read, Update, Delete via authenticated endpoints)
-- Runtime Evaluation Logic with:
-  - `enabled` switch
-  - `rolloutPercentage` buckets (0-25, 26-50, 51-75, 76-100)
-  - `targetUsers` list
-- Environment Segmentation (dev, staging, prod)
-- Redis Caching for sub-millisecond lookups
-- Audit Logging with `FlagLog` schema
-- Server-Side Pagination & Rate-Limiting
-- Stats Controller (`/api/flags/stats`) with metrics:
-  - Total, enabled/disabled counts
+---
+
+## ✅ Implemented Features
+
+- **CRUD API for Flags** (Create, Read, Update, Delete)  
+- **Runtime Evaluation Logic**: `enabled` switch, `rolloutPercentage`, `targetUsers`  
+- **Environment Segmentation** (`dev`, `staging`, `prod`)  
+- **Redis Caching** for fast lookups  
+- **Audit Logging** with `FlagLog` schema  
+- **Server-Side Pagination & Rate-Limiting**  
+- **Stats Controller** with:
+  - Total / enabled / disabled counts
   - Flags per environment
   - Rollout bucket distribution
-  - `newThisWeek`, `evalsThisWeek`
+  - Weekly stats (`newThisWeek`, `evalsThisWeek`)  
+- **React + Tailwind Dashboard** with KPI cards and Chart.js visualizations  
+- **Dockerized setup** for easy deployment  
+- **GitHub Actions** for CI/CD automation
 
-### Dashboard
-- React + Tailwind UI
-- Stat cards (KPI widgets)
-- Charts (Pie, Bar, Horizontal Bar) via Chart.js
-- Mock Users for testing
+---
 
-## Tech Stack
+## 🧪 Coming Next: Mini A/B-Testing & Experimentation Module
 
-**Backend**: Node.js, Express, Mongoose (MongoDB), Redis  
-**Frontend**: React.js, Tailwind CSS, Chart.js (`react-chartjs-2`)  
-**Auth & Security**: JWT auth (planned), rate-limiter  
-**DevOps**: Git, Docker (planned), GitHub Actions (planned)
+Turn the flag system into a lightweight experimentation platform.
 
-## Usage
+**Planned:**
+1. **Experiment Entity** with variants, weights, and metrics  
+2. **Variant Assignment Logic** for sticky user experiences  
+3. **Event Tracking API** for conversions  
+4. **Analytics Dashboard** with lift, conversion rates, and visual charts  
+5. **Lightweight SDK** for easy integration  
+6. **CI/CD hooks** for automated publishing
 
-1. Start Backend:
+---
+
+## 💡 Why This Matters
+
+Feature flags are a powerful tool for modern software delivery.  
+With this system (and planned extensions), teams can:
+
+- **Phased Rollouts:** Gradually enable a feature for a percentage of users to reduce risk.  
+- **Canary Testing:** Deploy new code to a small segment before a full rollout.  
+- **A/B Testing:** Serve different feature variants to different groups and measure impact.  
+- **Emergency Kill-Switches:** Instantly disable problematic features without redeploying code.  
+
+This architecture lays the foundation for all these scenarios — even if some are not yet implemented.
+
+---
+
+## 🛠 Tech Stack
+
+**Backend:** Node.js, Express, Mongoose, Redis  
+**Frontend:** React, Tailwind CSS, Chart.js (`react-chartjs-2`)  
+**Auth:** JWT (planned)  
+**DevOps:** Git, Docker, GitHub Actions
+
+---
+
+## 🚀 Usage
+
+1. **Start Backend:**
 ```bash
-npm install && npm run dev
-2. Start Frontend:
-```bash
-npm install && npm start
+cd backend
+npm install
+npm run dev
