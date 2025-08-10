@@ -79,6 +79,8 @@ This architecture lays the foundation for all these scenarios — even if some a
 cd backend
 npm install
 npm run dev
+```
+
 2. **Start Frontend:**
 ```bash
 cd frontend
